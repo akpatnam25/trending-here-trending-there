@@ -76,12 +76,14 @@ from bokeh.palettes import Spectral6
 from bokeh.plotting import figure
 from bokeh.transform import factor_cmap
 from bokeh.models import HoverTool, ColorBar, NumeralTickFormatter, LinearColorMapper, LassoSelectTool, ResetTool, PanTool, BoxSelectTool, TapTool, PolySelectTool
-
+from bokeh.io import output_file
+from bokeh.models.widgets import Tabs, Panel
 
 
 warnings.filterwarnings('ignore')
 
-## written by Aravind Patnam
+## written by Jeremy Tan
+## inserts category field into each dataframe from given json file
 def insert_category_field(df):
     # add a category column using the category id from the json file
     id_to_category = {}
@@ -742,3 +744,342 @@ def do_sentiment_analysis_visualization(data):
     show(tabs)
 
 
+# written by Jeremy Tan
+# How long did a video stay trending?
+def makeVideoTrending(full_trending_df, full_trending_df_fill):
+    new = pd.DataFrame(full_trending_df_fill.groupby([full_trending_df_fill.index,'country']).count()['title'].sort_values(ascending=False)).reset_index()
+    new.head(), new.tail()
+    video_list,max_list = list(),list()
+    country_list = full_trending_df.groupby(['country']).count().index
+
+    bokeh.io.reset_output()
+    bokeh.io.output_notebook()
+
+    # gabs countries and grabs the times it appears in the dataframe
+    # print(country_list)
+    for c in country_list:
+        video_list.append(new[new['country']==c]['title'].value_counts().sort_index())
+        max_list.append(max(new[new['country']==c]['title'].value_counts().sort_index().index))
+    # print(video_list)
+    # print(max_list)
+
+    # make line plots for the different countries (repeat another 9 times)
+    first_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[0],
+                 toolbar_location=None)
+
+    # plot for different countries (repeat another 9 times)
+    first_fig.line(x=video_list[0].index, y=video_list[0],
+             color='gray', line_width=1)
+
+    second_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[1],
+                 toolbar_location=None)
+
+    second_fig.line(x=video_list[1].index, y=video_list[1],
+             color='gray', line_width=1)
+
+    third_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[2],
+                 toolbar_location=None)
+
+    third_fig.line(x=video_list[2].index, y=video_list[2],
+             color='gray', line_width=1)
+
+
+    fourth_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[3],
+                 toolbar_location=None)
+
+    fourth_fig.line(x=video_list[3].index, y=video_list[3],
+             color='gray', line_width=1)
+
+    fifth_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[4],
+                 toolbar_location=None)
+
+    fifth_fig.line(x=video_list[4].index, y=video_list[4],
+             color='gray', line_width=1)
+
+    sixth_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[5],
+                 toolbar_location=None)
+
+    sixth_fig.line(x=video_list[5].index, y=video_list[5],
+             color='gray', line_width=1)
+
+
+    seventh_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[6],
+                 toolbar_location=None)
+
+    seventh_fig.line(x=video_list[6].index, y=video_list[6],
+             color='gray', line_width=1)
+
+    eight_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[7],
+                 toolbar_location=None)
+
+    eight_fig.line(x=video_list[7].index, y=video_list[7],
+             color='gray', line_width=1)
+
+    ninth_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[8],
+                 toolbar_location=None)
+
+    ninth_fig.line(x=video_list[8].index, y=video_list[8],
+             color='gray', line_width=1)
+
+    tenth_fig = figure(x_axis_type='linear',
+                 plot_height=300, plot_width=600,
+                 title='How long did a video stay trending?',
+                 x_axis_label='Conccurent Appearences (days)', y_axis_label=country_list[9],
+                 toolbar_location=None)
+
+    tenth_fig.line(x=video_list[9].index, y=video_list[9],
+             color='gray', line_width=1)
+
+    #Add panels for tabs
+    first_panel = Panel(child=first_fig, title='Canada')
+    second_panel = Panel(child=second_fig, title='Germany')
+    third_panel = Panel(child=third_fig, title='France')
+    fourth_panel = Panel(child=fourth_fig, title='Great Britan')
+    fifth_panel = Panel(child=fifth_fig, title='India')
+    sixth_panel = Panel(child=sixth_fig, title='Japan')
+    seventh_panel = Panel(child=seventh_fig, title='Korea')
+    eighth_panel = Panel(child=eight_fig, title='Mexico')
+    ninth_panel = Panel(child=ninth_fig, title='Russia')
+    tenth_panel = Panel(child=tenth_fig, title='United States')
+
+
+    # Assign the panels to Tabs
+    tabs = Tabs(tabs=[first_panel, second_panel, third_panel, fourth_panel, fifth_panel, sixth_panel, seventh_panel, eighth_panel, ninth_panel, tenth_panel])
+    show(tabs)
+
+
+# Written by Jeremy Tan
+# What is the correlation between views, likes, disklies, and comment count
+def makeScatter(full_trending_df):
+    # make a scatter matrix to visualzie correlations
+    fig = px.scatter_matrix(full_trending_df, dimensions=['views', 'likes', 'dislikes', 'comments', 'title_length', 'description_length'])
+    fig.update_traces(opacity=0.3, showupperhalf=False)
+    fig.update_layout(title = "Correlations", width = 900, height = 900)
+    fig.show()
+
+# Written by Jeremy Tan
+def trendingCategories(country, name):
+    cat = country['category'].value_counts().reset_index()
+    pop = px.bar(x=cat['category'], y=cat['index'], orientation='h')
+    pop.update_layout(title_text="Most successful categories of trend videos in " + name, height=400)
+    pop.update_xaxes(title_text="Number of Videos")
+    pop.update_yaxes(title_text="Categories")
+    pop.show()
+
+# Written by Jeremy Tan
+def nontrendingCategories(country, name):
+    cat = country['category'].value_counts().reset_index()
+    pop = px.bar(x=cat['category'], y=cat['index'], orientation='h')
+    pop.update_layout(title_text="Categories that fail to trend in " + name, height=400)
+    pop.update_xaxes(title_text="Number of Videos")
+    pop.update_yaxes(title_text="Categories")
+    pop.show()
+
+# Written by Jeremy Tan
+# What is the correlation between views, likes, disklies, and comment count
+def makeScatter(full_trending_df):
+    # make a scatter matrix to visualzie correlations
+    fig = px.scatter_matrix(full_trending_df, dimensions=['views', 'likes', 'dislikes', 'comments', 'title_length', 'description_length'])
+    fig.update_traces(opacity=0.3, showupperhalf=False)
+    fig.update_layout(title = "Correlations", width = 900, height = 900)
+    fig.show()
+
+# Written by Jeremy Tan
+def makeHeatMap(correlations):
+    fig = go.Figure(data=go.Heatmap(
+        z=correlations.values,
+        x=correlations.index,
+        y=correlations.index,
+        colorscale="Blues",
+        zmin=-1,
+        zmax=1
+    ))
+    fig.update_layout(title='Correlations between title, description, comments, dislikes, likes, and views')
+    fig.show()
+
+# Written by Jeremy Tan
+# What is the correlation between views, likes, disklies, and comment count in categories?
+def makeCategoryHeatMap(full_trending_df, corr_list, categories):
+    fig = go.Figure()
+    for idx, corr in enumerate(corr_list):
+        fig.add_trace(
+            go.Heatmap(
+                z=corr.values,
+                x=corr.index,
+                y=corr.index,
+                colorscale="Blues",
+                zmin=-1,
+                zmax=1,
+                visible=False))
+    fig.update_layout(
+        updatemenus=[
+            go.layout.Updatemenu(
+                buttons=list([
+                    dict(label=cat,
+                         method="update",
+                         args=[{"visible": [False if sub_idx != idx else True for sub_idx, sub_cat in enumerate(categories)]},
+                               {"title": "Correlation heatmap for category: " + cat}])
+                    for idx, cat in enumerate(categories)
+                ] )
+            )
+        ])
+    fig.show()
+
+# Written by Jeremy Tan
+def trendingCategories(country, name):
+    cat = country['category'].value_counts().reset_index()
+    pop = px.bar(x=cat['category'], y=cat['index'], orientation='h')
+    pop.update_layout(title_text="Most successful categories of trend videos in " + name, height=400)
+    pop.update_xaxes(title_text="Number of Videos")
+    pop.update_yaxes(title_text="Categories")
+    pop.show()
+
+# Written by Jeremy Tan
+def nontrendingCategories(country, name):
+    cat = country['category'].value_counts().reset_index()
+    pop = px.bar(x=cat['category'], y=cat['index'], orientation='h')
+    pop.update_layout(title_text="Categories that fail to trend in " + name, height=400)
+    pop.update_xaxes(title_text="Number of Videos")
+    pop.update_yaxes(title_text="Categories")
+    pop.show()
+
+# Written by Jeremy Tan
+def likes_to_categories(country, name, log):
+    country['likes_log'] = np.log(country['likes'] + 1)
+    country['views_log'] = np.log(country['views'] + 1)
+    if "likes" in log:
+        fig = px.box(country, y=log, x='category')
+        fig.update_layout(title_text="Like Distribuition by Category in " + name, height=700)
+        fig.update_yaxes(title_text="Likes(log)")
+        fig.show()
+    else:
+        fig = px.box(country, y=log, x='category')
+        fig.update_layout(title_text="View Distribuition by Category in " + name, height=700)
+        fig.update_yaxes(title_text="Views(log)")
+        fig.show()
+
+# Written by Jeremy Tan
+def videos_top(country, name):
+    tmp = country.channel_title.value_counts()[:25]
+
+    pop = px.bar(x=tmp, y=tmp.index, orientation='h')
+    pop.update_layout(title_text="Top Channels", height=700)
+    pop.update_xaxes(title_text="# times channel reached trending")
+    pop.update_yaxes(title_text="channel name")
+
+    pop.show()
+
+# Written by Jeremy Tan
+def showHours(full_trending_df):
+    fig = make_subplots(
+        rows=2, cols=1, subplot_titles=("Hours Videos are Published", "Like Rate")
+    )
+
+    s = full_trending_df['hour'].value_counts()
+    new = pd.DataFrame({'Hour':s.index, 'Count':s.values})
+
+    fig.add_trace(go.Bar(x=new['Hour'], y=new['Count']), row=1, col=1)
+    fig.add_trace(go.Box(x=full_trending_df["hour"], y=full_trending_df["like_rate"]), row=2, col=1)
+    fig.update_xaxes(title_text="Hour", row=1, col=1)
+    fig.update_xaxes(title_text="Hour", row=2, col=1)
+    fig.update_yaxes(title_text="Count", row=1, col=1)
+    fig.update_yaxes(title_text="Like Rate(log)", row=2, col=1)
+    fig.show()
+
+
+# Written by Jeremy Tan
+def likes_to_categories(country, name, log):
+    country['likes_log'] = np.log(country['likes'] + 1)
+    country['views_log'] = np.log(country['views'] + 1)
+    if "likes" in log:
+        fig = px.box(country, y=log, x='category')
+        fig.update_layout(title_text="Like Distribuition by Category in " + name, height=700)
+        fig.update_yaxes(title_text="Likes(log)")
+        fig.show()
+    else:
+        fig = px.box(country, y=log, x='category')
+        fig.update_layout(title_text="View Distribuition by Category in " + name, height=700)
+        fig.update_yaxes(title_text="Views(log)")
+        fig.show()
+
+# Written by Jeremy Tan
+def videos_top(country, name):
+    tmp = country.channel_title.value_counts()[:25]
+
+    pop = px.bar(x=tmp, y=tmp.index, orientation='h')
+    pop.update_layout(title_text="Top Channels", height=700)
+    pop.update_xaxes(title_text="# times channel reached trending")
+    pop.update_yaxes(title_text="channel name")
+
+    pop.show()
+
+# Written by Jeremy Tan
+def visualize_most(my_df, column):
+    # sort df by column
+    sorted_df = my_df.sort_values(column, ascending=False).iloc[:10]
+    # make a bar plot
+    pop = px.bar(x=sorted_df['title'], y=sorted_df[column])
+    pop.update_layout(title_text="Top Ten " + column, height=700)
+    pop.update_yaxes(title_text="#")
+    pop.update_xaxes(title_text="Video Title")
+    pop.show()
+
+# Written by Jeremy Tan
+def engagement(full_trending_df):
+    country_list = full_trending_df.groupby(['country']).count().index
+    p=['views', 'likes', 'dislikes', 'comments']
+    calcs = list()
+    for i, typ in enumerate(p):
+        calc = list()
+        for c in country_list:
+            calc.append(full_trending_df[full_trending_df['country'] == c][typ].agg('sum') / len(full_trending_df[full_trending_df['country'] == c].index.unique()))
+        calcs.append(calc)
+
+    fig = make_subplots(
+        rows=2, cols=2, subplot_titles=("Views", "Likes", "Dislikes", "Comments")
+    )
+
+    # Add traces
+    fig.add_trace(go.Bar(x=list(country_list), y=calcs[0]), row=1, col=1)
+    fig.add_trace(go.Bar(x=list(country_list), y=calcs[1]), row=1, col=2)
+    fig.add_trace(go.Bar(x=list(country_list), y=calcs[2]), row=2, col=1)
+    fig.add_trace(go.Bar(x=list(country_list), y=calcs[3]), row=2, col=2)
+    fig.update_layout(title_text="Viewer Engagement", height=700)
+
+    fig.update_xaxes(title_text="countries", row=1, col=1)
+    fig.update_xaxes(title_text="countries", row=1, col=2)
+    fig.update_xaxes(title_text="countries", row=2, col=1)
+    fig.update_xaxes(title_text="countries", row=2, col=2)
+
+    fig.update_yaxes(title_text="num", row=1, col=1)
+    fig.update_yaxes(title_text="num", row=1, col=2)
+    fig.update_yaxes(title_text="num", row=2, col=1)
+    fig.update_yaxes(title_text="num", row=2, col=2)
+    fig.show()
