@@ -926,7 +926,7 @@ def makeHeatMap(correlations):
 
 # Written by Jeremy Tan
 # What is the correlation between views, likes, disklies, and comment count in categories?
-def makeCategoryHeatMap(full_trending_df, corr_list, categories):
+def makeCategoryHeatMap(corr_list, categories):
     fig = go.Figure()
     for idx, corr in enumerate(corr_list):
         fig.add_trace(
