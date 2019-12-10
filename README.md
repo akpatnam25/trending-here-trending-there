@@ -8,4 +8,4 @@ Github:
 https://github.com/akpatnam25/trending-here-trending-there
 
 # view notebook here (use Chrome for best experience)
-https://nbviewer.jupyter.org/github/akpatnam25/trending-here-trending-there/blob/master/FinalTrendingHereTrendingThere_v2.ipynb
+https://nbviewer.jupyter.org/github/akpatnam25/trending-here-trending-there/blob/master/Aravind_Patnam_FinalTrendingHereTrendingThere_v2.ipynb
