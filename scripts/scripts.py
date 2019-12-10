@@ -348,6 +348,8 @@ def visualize_LDA(start, corpus, dictionary):
         return lda_display
 
 ## written by Aravind Patnam
+## edited by Timothy Le
+## edit 1: Rounded the mean value of each category to remove power of 10 notation
 def do_describe_analysis(describeMap, countries, describesKeys):
     views_count = []
     views_mean = []
@@ -372,25 +374,25 @@ def do_describe_analysis(describeMap, countries, describesKeys):
 
     for a in countries:
         views_count.append(describeMap[a].loc['count', 'views'])
-        views_mean.append(describeMap[a].loc['mean', 'views'])
+        views_mean.append(round(describeMap[a].loc['mean', 'views']))
         views_max.append(describeMap[a].loc['max', 'views'])
         views_min.append(describeMap[a].loc['min', 'views'])
 
         likes_count.append(describeMap[a].loc['count', 'likes'])
-        likes_mean.append(describeMap[a].loc['mean', 'likes'])
+        likes_mean.append(round(describeMap[a].loc['mean', 'likes']))
         likes_max.append(describeMap[a].loc['max', 'likes'])
         likes_min.append(describeMap[a].loc['min', 'likes'])
 
         dislikes_count.append(describeMap[a].loc['count', 'dislikes'])
-        dislikes_mean.append(describeMap[a].loc['mean', 'dislikes'])
+        dislikes_mean.append(round(describeMap[a].loc['mean', 'dislikes']))
         dislikes_max.append(describeMap[a].loc['max', 'dislikes'])
         dislikes_min.append(describeMap[a].loc['min', 'dislikes'])
 
-        comments_mean.append(describeMap[a].loc['mean', 'comment_count'])
+        comments_mean.append(round(describeMap[a].loc['mean', 'comment_count']))
         comments_max.append(describeMap[a].loc['max', 'comment_count'])
         comments_min.append(describeMap[a].loc['min', 'comment_count'])
 
-        tags_mean.append(describeMap[a].loc['mean', 'tags'])
+        tags_mean.append(round(describeMap[a].loc['mean', 'tags']))
         tags_max.append(describeMap[a].loc['max', 'tags'])
         tags_min.append(describeMap[a].loc['min', 'tags'])
     # visualize above numeric data
@@ -1083,3 +1085,35 @@ def engagement(full_trending_df):
     fig.update_yaxes(title_text="num", row=2, col=1)
     fig.update_yaxes(title_text="num", row=2, col=2)
     fig.show()
+    
+# written by Timothy Le
+# bar graph of most common tags within a dataframe no dups
+def df_to_bar(country_df, title):
+    common_tags = no_dups_common_tags(country_df)
+    tagdf = pd.DataFrame(list(common_tags.items()), columns=['tag', 'count']).head(50)
+    tagcds = ColumnDataSource(tagdf.head(50))
+    
+    bokeh.io.reset_output()
+    bokeh.io.output_notebook()
+    colorlist = Category20[20] + Category20[20] + Category20[20]  
+    hover = HoverTool()
+    hover.tooltips = [
+        ("Tag", "@tag"),
+        ("Count" , "@count")
+    ]
+
+    pBar = figure(height=600, width=500, y_range=tagdf['tag'], title=title+" Most Common Tags", x_axis_label='Count', tools=[hover])
+    pBar.hbar(source=tagcds, height=.5, y='tag', right='count', fill_color=factor_cmap('tag', palette=colorlist, factors=tagdf['tag']))
+    show(pBar)
+
+# written by Timothy Le
+# get most common tags from a country df and removes duplicates within df based on title of video
+def no_dups_common_tags(country_df):
+    nodups_df = country_df.drop_duplicates(subset ="title", keep = "last")
+    tags = nodups_df['tags'].to_string(index=False, header=False)
+    split_tags = [i.replace('"', '') for i in tags.split("|")]
+    stop_words = stopwords.words('english')
+    filtered_tags = [word for word in split_tags if word not in stop_words]
+    fdist = FreqDist(split_tags)
+    most_popular_tags = fdist.most_common(1000)
+    return dict(most_popular_tags)
